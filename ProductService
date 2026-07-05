@@ -1,0 +1,30 @@
+package com.example.productservice.service;
+
+import com.example.productservice.entity.Product;
+import com.example.productservice.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ProductService {
+
+    @Autowired
+    private ProductRepository repository;
+
+    @Cacheable(value = "products", key = "#id")
+    public Product getProduct(Long id) {
+
+        System.out.println("Load từ Database");
+
+        return repository.findById(id).orElse(null);
+    }
+
+    @CacheEvict(value = "products", key = "#product.id")
+    public Product updateProduct(Product product) {
+
+        return repository.save(product);
+    }
+
+}
